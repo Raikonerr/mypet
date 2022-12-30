@@ -1,0 +1,23 @@
+@startuml
+
+actor User
+actor Admin
+
+User -> Authentication: login()
+User -> Authentication: logout()
+User -> Person: createProfile()
+User -> Person: viewAdoptionPosts()
+User -> Person: createAdoptionPost()
+User -> Person: adoptAnimal()
+User -> Person: addComment()
+User -> Person: addReply()
+
+Admin -> Authentication: login()
+Admin -> Authentication: logout()
+Admin -> Person: reviewAdoptionPost()
+Admin -> Person: manageUserAccounts()
+
+
+@enduml
+
+

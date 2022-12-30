@@ -1,0 +1,55 @@
+@startuml
+class Person {
+  -id: int
+  -login: string
+  -password: string
+  -address: string
+  -email: string
+  -telephone: string
+  -numAnimals: int
+  +createProfile(): void
+  +viewProfile(): void
+  +updateProfile(): void
+  +deleteProfile(): void
+  +addAdoptionOffer(): void
+  +viewAdoptionOffers(): void
+  +updateAdoptionOffer(): void
+  +deleteAdoptionOffer(): void
+  +search(): void
+}
+
+class Animal {
+  -type: string
+  -age: int
+  -numDays: int
+  -description: string
+  -photos: list[string]
+}
+
+class AdoptionOffer {
+  -title: string
+  -description: string
+  -city: string
+  -type: string
+  -numDays: int
+  -images: list[string]
+  -price: float
+  +addComment(): void
+  +addReply(): void
+}
+
+class Comment {
+  -text: string
+}
+
+class Reply {
+  -text: string
+}
+
+Person "1" - "*" Animal: owns
+Person "1" -* "*" AdoptionOffer: creates
+Animal "1" - "1" AdoptionOffer: is part of
+AdoptionOffer "1" -- "*" Comment: has
+Comment "1" -- "*" Reply: has
+
+@enduml
