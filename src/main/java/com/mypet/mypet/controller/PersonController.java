@@ -50,5 +50,4 @@ public class PersonController {
         return new ResponseEntity<>(person, HttpStatus.OK);
     }
 
-
 }
