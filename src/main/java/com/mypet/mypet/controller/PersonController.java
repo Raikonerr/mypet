@@ -49,5 +49,4 @@ public class PersonController {
         Person person = personService.deletePersonById(id);
         return new ResponseEntity<>(person, HttpStatus.OK);
     }
-
 }

@@ -3,6 +3,7 @@ package com.mypet.mypet.service;
 import com.mypet.mypet.exception.BadRequestException;
 import com.mypet.mypet.exception.NotFoundException;
 import com.mypet.mypet.model.AdoptionOffer;
+import com.mypet.mypet.model.Person;
 import com.mypet.mypet.repository.AdoptionOfferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,4 +28,17 @@ public class AdoptionOfferService {
         adoptionOfferRepository.deleteById(id);
     }
 
+    public Iterable<AdoptionOffer> getAllAdoptionOffers() {
+        return adoptionOfferRepository.findAll();
+    }
+
+    public AdoptionOffer deleteAdoptionOfferById(Long id) {
+        AdoptionOffer adoptionOffer = adoptionOfferRepository.findById(id).orElseThrow(() -> new NotFoundException("AdoptionOffer with id " + id + " was not found"));
+        adoptionOfferRepository.deleteById(id);
+        return adoptionOffer;
+    }
+
+    public Iterable<AdoptionOffer> getAdoptionOfferByPersonId(Person person) {
+        return adoptionOfferRepository.findByPersonId(person);
+    }
 }
