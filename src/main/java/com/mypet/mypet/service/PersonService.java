@@ -7,6 +7,8 @@ import com.mypet.mypet.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PersonService {
     private final PersonRepository personRepository;
@@ -33,4 +35,7 @@ public class PersonService {
         return person;
     }
 
+    public List<Person> getAllPersons() {
+        return personRepository.findAll();
+    }
 }
