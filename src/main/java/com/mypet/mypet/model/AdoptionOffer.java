@@ -130,4 +130,8 @@ public class AdoptionOffer {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
+    public Person getPerson() {
+        return owner;
+    }
 }

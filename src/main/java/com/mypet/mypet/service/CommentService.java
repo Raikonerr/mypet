@@ -3,6 +3,7 @@ package com.mypet.mypet.service;
 import com.mypet.mypet.exception.BadRequestException;
 import com.mypet.mypet.exception.NotFoundException;
 import com.mypet.mypet.model.Comment;
+import com.mypet.mypet.model.Person;
 import com.mypet.mypet.repository.CommentRepository;
 import com.mypet.mypet.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,5 +41,13 @@ public class CommentService {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new NotFoundException("Comment with id " + id + " was not found"));
         commentRepository.deleteById(id);
         replyRepository.deleteAll(comment.getReplies());
+    }
+
+    public Iterable<Comment> getAllComments() {
+        return commentRepository.findAll();
+    }
+
+    public Iterable<Comment> getCommentByPersonId(Person person) {
+        return commentRepository.findByPerson(person);
     }
 }

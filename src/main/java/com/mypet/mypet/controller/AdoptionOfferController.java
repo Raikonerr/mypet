@@ -47,7 +47,7 @@ public class AdoptionOfferController {
         adoptionOfferService.deleteAdoptionOffer(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @DeleteMapping("/deleteById/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<AdoptionOffer> deleteAdoptionOfferById(@PathVariable("id") Long id) {
         AdoptionOffer adoptionOffer = adoptionOfferService.deleteAdoptionOfferById(id);
         return new ResponseEntity<>(adoptionOffer, HttpStatus.OK);
