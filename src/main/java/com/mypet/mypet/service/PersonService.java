@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PersonService {
@@ -17,7 +18,12 @@ public class PersonService {
         this.personRepository = personRepository;
     }
     public Person getPersonById(Long id) {
-        return personRepository.findById(id).orElseThrow(() -> new NotFoundException("Person with id " + id + " was not found"));
+        Optional<Person> person = personRepository.findById(id);
+        if (person.isPresent()) {
+            return person.get();
+        } else {
+            throw new NotFoundException("There is no person with id : " + id);
+        }
     }
     // crud
     public Person createPerson(Person person) {

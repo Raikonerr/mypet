@@ -42,4 +42,7 @@ public class AnimalService
         return animal;
     }
 
+    public Iterable<Animal> getAllAnimals() {
+        return animalRepository.findAll();
+    }
 }

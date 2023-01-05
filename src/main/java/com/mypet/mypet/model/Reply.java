@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class Reply {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String text;
     @ManyToOne

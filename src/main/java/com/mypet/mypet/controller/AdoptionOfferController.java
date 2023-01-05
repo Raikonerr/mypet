@@ -22,41 +22,69 @@ public class AdoptionOfferController {
         this.personService = personService;
     }
     @GetMapping()
-    public ResponseEntity<Iterable<AdoptionOffer>> getAllAdoptionOffers() {
+    public Iterable<AdoptionOffer> getAllAdoptionOffers(){
         Iterable<AdoptionOffer> adoptionOffers = adoptionOfferService.getAllAdoptionOffers();
-        return new ResponseEntity<>(adoptionOffers, HttpStatus.OK);
-    }
-    @GetMapping("/{id}")
-    public ResponseEntity<AdoptionOffer> getAdoptionOfferById(@PathVariable("id") Long id) {
-        AdoptionOffer adoptionOffer = adoptionOfferService.getAdoptionOfferById(id);
-        return new ResponseEntity<>(adoptionOffer, HttpStatus.OK);
-    }
-    @PostMapping()
-    public ResponseEntity<AdoptionOffer> addAdoptionOffer(@RequestBody AdoptionOffer adoptionOffer) {
-        AdoptionOffer newAdoptionOffer = adoptionOfferService.createAdoptionOffer(adoptionOffer);
-        return new ResponseEntity<>(newAdoptionOffer, HttpStatus.CREATED);
+        return ResponseEntity.ok(adoptionOffers).getBody();
     }
 
-    @PutMapping()
-    public ResponseEntity<AdoptionOffer> updateAdoptionOffer(@RequestBody AdoptionOffer adoptionOffer) {
-        AdoptionOffer updateAdoptionOffer = adoptionOfferService.updateAdoptionOffer(adoptionOffer);
-        return new ResponseEntity<>(updateAdoptionOffer, HttpStatus.OK);
+    @GetMapping("/{id}")
+    public ResponseEntity<AdoptionOffer> getAdoptionOfferById(@PathVariable("id") Long id){
+        try{
+            AdoptionOffer adoptionOffer = adoptionOfferService.getAdoptionOfferById(id);
+            return ResponseEntity.ok(adoptionOffer);
+        }catch (NotFoundException e){
+            throw new NotFoundException("AdoptionOffer with id " + id + " was not found");
+        }
     }
-    @DeleteMapping()
-    public ResponseEntity<?> deleteAdoptionOffer(@PathVariable("id") Long id) {
-        adoptionOfferService.deleteAdoptionOffer(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+    @PostMapping()
+    public ResponseEntity<AdoptionOffer> addAdoptionOffer(@RequestBody AdoptionOffer adoptionOffer){
+        try{
+            return new ResponseEntity<>(adoptionOfferService.createAdoptionOffer(adoptionOffer), HttpStatus.CREATED);
+        }catch (Exception e){
+            throw new RuntimeException("AdoptionOffer could not be created");
+        }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AdoptionOffer> updateAdoptionOffer(@RequestBody AdoptionOffer updateAdoptionOffer, @PathVariable Long id){
+        try{
+            AdoptionOffer adoptionOffer = adoptionOfferService.getAdoptionOfferById(id);
+            try{
+                adoptionOffer.setOwner(updateAdoptionOffer.getOwner());
+                adoptionOffer.setAnimal(updateAdoptionOffer.getAnimal());
+                adoptionOffer.setComments(updateAdoptionOffer.getComments());
+                adoptionOffer.setNumDays(updateAdoptionOffer.getNumDays());
+                adoptionOffer.setCity(updateAdoptionOffer.getCity());
+                adoptionOffer.setDescription(updateAdoptionOffer.getDescription());
+                adoptionOffer.setPrice(updateAdoptionOffer.getPrice());
+                adoptionOffer.setImages(updateAdoptionOffer.getImages());
+                adoptionOffer.setTitle(updateAdoptionOffer.getTitle());
+                adoptionOffer.setType(updateAdoptionOffer.getType());
+                return new ResponseEntity<>(adoptionOfferService.updateAdoptionOffer(adoptionOffer), HttpStatus.OK);
+            }catch (Exception e){
+                throw new RuntimeException("AdoptionOffer could not be updated");
+            }
+        }catch (NotFoundException e){
+            throw new NotFoundException("AdoptionOffer with id " + id + " was not found");
+        }
+    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<AdoptionOffer> deleteAdoptionOfferById(@PathVariable("id") Long id) {
-        AdoptionOffer adoptionOffer = adoptionOfferService.deleteAdoptionOfferById(id);
-        return new ResponseEntity<>(adoptionOffer, HttpStatus.OK);
+    public ResponseEntity<AdoptionOffer> deleteAdoptionOffer(@PathVariable Long id){
+        try{
+            AdoptionOffer adoptionOffer = adoptionOfferService.getAdoptionOfferById(id);
+            try{
+                adoptionOfferService.deleteAdoptionOffer(id);
+                return new ResponseEntity<>(adoptionOffer, HttpStatus.OK);
+            }catch (Exception e){
+                throw new RuntimeException("AdoptionOffer could not be deleted");
+            }
+        }catch (NotFoundException e){
+            throw new NotFoundException("AdoptionOffer with id " + id + " was not found");
+        }
     }
-    @GetMapping("/getPostByPerson/{id}")
-    public ResponseEntity<Iterable<AdoptionOffer>> getAdoptionOfferByPersonId(@PathVariable("id") Long id) {
-        Person person = personService.getPersonById(id);
-        Iterable<AdoptionOffer> adoptionOffers = adoptionOfferService.getAdoptionOfferByPersonId(person);
-        return new ResponseEntity<>(adoptionOffers, HttpStatus.OK);
-    }
+
+
 
 }

@@ -13,9 +13,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/person")
+@CrossOrigin("*")
 public class PersonController {
-    private final PersonService personService;
     @Autowired
+    private final PersonService personService;
+
+
     public PersonController(PersonService personService) {
         this.personService = personService;
     }
@@ -25,26 +28,47 @@ public class PersonController {
         return new ResponseEntity<>(persons, HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Person> getPersonById(@PathVariable("id") Long id) {
-        Person person = personService.getPersonById(id);
-        return new ResponseEntity<>(person, HttpStatus.OK);
+    public ResponseEntity<Person> findPersonById(@PathVariable Integer id){
+        try {
+            return new ResponseEntity<>(personService.getPersonById(Long.valueOf(id)), HttpStatus.OK);
+        }catch(Exception e){
+            throw new NotFoundException("There is no person with id : " + id);
+        }
     }
     @PostMapping()
-    public ResponseEntity<Person> addPerson(@RequestBody Person person) {
-        Person newPerson = personService.createPerson(person);
-        return new ResponseEntity<>(newPerson, HttpStatus.CREATED);
+    public ResponseEntity<Person> savePerson(@RequestBody Person person){
+        /*try{
+            return new ResponseEntity<>(personService.createPerson(person), HttpStatus.CREATED);
+        }catch (Exception e){
+            throw new BadRequestException("Something wrong in the form or values of the required data");
+        }*/
+        return new ResponseEntity<>(personService.createPerson(person), HttpStatus.CREATED);
     }
-    @PutMapping()
-    public ResponseEntity<Person> updatePerson(@RequestBody Person person) {
-        Person updatePerson = personService.updatePerson(person);
-        return new ResponseEntity<>(updatePerson, HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<Person> updatePerson(@RequestBody Person updatePerson,@PathVariable Integer id) {
+        try{
+        Person person = personService.getPersonById(Long.valueOf(id));
+        try{
+            person.setAddress(updatePerson.getAddress());
+            person.setEmail(updatePerson.getEmail());
+            person.setPassword(updatePerson.getPassword());
+            person.setLogin(updatePerson.getLogin());
+            person.setTelephone(updatePerson.getTelephone());
+            person.setNumAnimals(updatePerson.getNumAnimals());
+            person.setAdoptionOffers(updatePerson.getAdoptionOffers());
+            return new ResponseEntity<>(personService.updatePerson(person), HttpStatus.OK);
+        }catch (Exception e){
+            throw new BadRequestException("Something wrong in the form or values of the required data");
+        }}catch (Exception e){
+            throw new NotFoundException("There is no person with id : " + id);
+        }
     }
     @DeleteMapping()
     public ResponseEntity<?> deletePerson(@PathVariable("id") Long id) {
         personService.deletePerson(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @DeleteMapping("/deleteById/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Person> deletePersonById(@PathVariable("id") Long id) {
         Person person = personService.deletePersonById(id);
         return new ResponseEntity<>(person, HttpStatus.OK);

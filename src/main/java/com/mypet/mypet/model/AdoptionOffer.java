@@ -7,7 +7,7 @@ import java.util.List;
 @Entity
 public class AdoptionOffer {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String title;
     private String description;
@@ -131,7 +131,4 @@ public class AdoptionOffer {
         this.comments = comments;
     }
 
-    public Person getPerson() {
-        return owner;
-    }
 }

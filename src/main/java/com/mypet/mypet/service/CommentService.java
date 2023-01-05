@@ -47,7 +47,4 @@ public class CommentService {
         return commentRepository.findAll();
     }
 
-    public Iterable<Comment> getCommentByPersonId(Person person) {
-        return commentRepository.findByPerson(person);
-    }
 }

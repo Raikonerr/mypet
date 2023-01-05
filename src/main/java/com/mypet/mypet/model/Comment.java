@@ -7,7 +7,7 @@ import java.util.List;
 @Entity
 public class Comment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String text;
     @ManyToOne
@@ -37,7 +37,7 @@ public class Comment {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText() {
         this.text = text;
     }
 

@@ -2,7 +2,6 @@ package com.mypet.mypet.controller;
 
 
 import com.mypet.mypet.model.Comment;
-import com.mypet.mypet.model.Person;
 import com.mypet.mypet.service.AdoptionOfferService;
 import com.mypet.mypet.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,28 +31,35 @@ public class CommentController {
     }
     @PostMapping()
     public ResponseEntity<Comment> addComment(@RequestBody Comment comment) {
-        Comment newComment = commentService.createComment(comment);
-        return new ResponseEntity<>(newComment, HttpStatus.CREATED);
+        try{
+            return new ResponseEntity<>(commentService.createComment(comment), HttpStatus.CREATED);
+        }catch (Exception e){
+            throw new RuntimeException("Comment could not be created");
+        }
     }
-    @PutMapping()
-    public ResponseEntity<Comment> updateComment(@RequestBody Comment comment) {
-        Comment updateComment = commentService.updateComment(comment);
-        return new ResponseEntity<>(updateComment, HttpStatus.OK);
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Comment> updateComment(@RequestBody Comment updateComment, @PathVariable Long id) {
+        Comment comment = commentService.getCommentById(id);
+        try{
+            comment.setAdoptionOffer(updateComment.getAdoptionOffer());
+            comment.setReplies(updateComment.getReplies());
+            comment.setText();
+            return new ResponseEntity<>(commentService.updateComment(comment), HttpStatus.OK);
+        }catch (Exception e){
+            throw new RuntimeException("Comment could not be updated");
+        }
     }
-    @DeleteMapping()
-    public ResponseEntity<?> deleteComment(@PathVariable("id") Long id) {
-        commentService.deleteComment(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Comment> deleteCommentById(@PathVariable("id") Long id) {
-        Comment comment = commentService.deleteCommentById(id);
-        return new ResponseEntity<>(comment, HttpStatus.OK);
+    public ResponseEntity<Comment> deleteComment(@PathVariable Long id) {
+        Comment comment = commentService.getCommentById(id);
+        try{
+            commentService.deleteCommentById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (Exception e){
+            throw new RuntimeException("Comment could not be deleted");
+        }
     }
-    @GetMapping("/getPostByPerson/{id}")
-    public ResponseEntity<Iterable<Comment>> getCommentByPersonId(@PathVariable("id") Long id) {
-        Person person = adoptionOfferService.getPersonById(id);
-        Iterable<Comment> comments = commentService.getCommentByPersonId(person);
-        return new ResponseEntity<>(comments, HttpStatus.OK);
-    }
+
 }

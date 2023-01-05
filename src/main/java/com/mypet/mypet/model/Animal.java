@@ -7,7 +7,7 @@ import java.util.*;
 @Entity
 public class Animal {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String type;
     private int age;

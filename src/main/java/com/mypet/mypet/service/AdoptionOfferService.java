@@ -39,10 +39,10 @@ public class AdoptionOfferService {
     }
 
     public Iterable<AdoptionOffer> getAdoptionOfferByPersonId(Person person) {
-        return adoptionOfferRepository.findByPersonId(person);
+        return adoptionOfferRepository.findByOwnerId(person);
     }
 
     public Person getPersonById(Long id) {
-        return adoptionOfferRepository.findById(id).orElseThrow(() -> new NotFoundException("Person with id " + id + " was not found")).getPerson();
+        return adoptionOfferRepository.findById(id).orElseThrow(() -> new NotFoundException("Person with id " + id + " was not found")).getOwner();
     }
 }
