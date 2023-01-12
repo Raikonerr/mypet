@@ -63,14 +63,20 @@ public class PersonController {
             throw new NotFoundException("There is no person with id : " + id);
         }
     }
-    @DeleteMapping()
-    public ResponseEntity<?> deletePerson(@PathVariable("id") Long id) {
-        personService.deletePerson(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Person> deletePersonById(@PathVariable("id") Long id) {
-        Person person = personService.deletePersonById(id);
-        return new ResponseEntity<>(person, HttpStatus.OK);
+    public ResponseEntity<Void> deletePerson(@PathVariable Integer id){
+        try{
+            //find the person
+            personService.getPersonById(Long.valueOf(id));
+            try {
+                //delete the person
+                personService.deletePerson(Long.valueOf(id));
+                return new ResponseEntity<>(HttpStatus.OK);
+            }catch(Exception e){
+                throw new BadRequestException("Something wrong in the form or values of the required data");
+            }
+        }catch(Exception e){
+            throw new NotFoundException("There is no person with id : " + id);
+        }
     }
 }
