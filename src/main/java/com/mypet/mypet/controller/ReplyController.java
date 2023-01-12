@@ -5,6 +5,8 @@ import com.mypet.mypet.model.Reply;
 import com.mypet.mypet.repository.CommentRepository;
 import com.mypet.mypet.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -18,29 +20,44 @@ public class ReplyController {
         this.replyRepository = replyRepository;
         this.commentRepository = commentRepository;
     }
+
     @GetMapping()
     public Iterable<Reply> getAllReplies() {
         return replyRepository.findAll();
     }
     @GetMapping("/{id}")
     public Optional<Reply> getReplyById(@PathVariable("id") Long id) {
-        return replyRepository.findById(id);
+        return new ResponseEntity<>(replyRepository.findById(id), HttpStatus.OK).getBody();
     }
+
     @PostMapping()
-    public Reply addReply(@RequestBody Reply reply) {
-        return replyRepository.save(reply);
+    public ResponseEntity<Reply> addReply(@RequestBody Reply reply) {
+        try{
+            return new ResponseEntity<>(replyRepository.save(reply), HttpStatus.CREATED);
+        }catch (Exception e){
+            throw new RuntimeException("Reply could not be created");
+        }
     }
-    @PutMapping()
-    public Reply updateReply(@RequestBody Reply reply) {
-        return replyRepository.save(reply);
+    @PutMapping("/{id}")
+    public ResponseEntity<Reply> updateReply(@RequestBody Reply updateReply, @PathVariable Long id) {
+        Reply reply = replyRepository.findById(id).get();
+        try{
+            reply.setComment(updateReply.getComment());
+            reply.setText(updateReply.getText());
+            return new ResponseEntity<>(replyRepository.save(reply), HttpStatus.OK);
+        }catch (Exception e){
+            throw new RuntimeException("Reply could not be updated");
+        }
     }
     @DeleteMapping("/{id}")
-    public void deleteReplyById(@PathVariable("id") Long id) {
-        replyRepository.deleteById(id);
+    public ResponseEntity<Reply> deleteReply(@PathVariable Long id) {
+        Reply reply = replyRepository.findById(id).get();
+        try{
+            replyRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }catch (Exception e){
+            throw new RuntimeException("Reply could not be deleted");
+        }
     }
-    @GetMapping("/getReplyByComment/{id}")
-    public Iterable<Reply> getReplyByCommentId(@PathVariable("id") Long id) {
-        Comment comment = commentRepository.findById(id).get();
-        return replyRepository.findByComments(comment);
-    }
+
 }
